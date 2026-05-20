@@ -1,5 +1,7 @@
 # Funciones.py
 
+import Prints
+
 def calcular_total_votos(lista_votos):
     total = 0
     for i in range(len(lista_votos)):
@@ -88,8 +90,15 @@ def verificar_segunda_vuelta(lista_id, lista_votos):
     if total_votos == 0:
         print("No hay votos registrados.")
         return
-    votos_aux = lista_votos.copy()
-    id_aux = lista_id.copy()
+
+    # Clonamos las listas de forma manual usando bucles para respetar las restricciones
+    votos_aux = []
+    id_aux = []
+    for i in range(len(lista_votos)):
+        votos_aux.append(lista_votos[i])
+        id_aux.append(lista_id[i])
+
+    # 1. Encontrar el ganador (maximo absoluto) de forma manual
     max_1 = votos_aux[0]
     idx_1 = 0
     for i in range(1, len(votos_aux)):
@@ -99,19 +108,21 @@ def verificar_segunda_vuelta(lista_id, lista_votos):
 
     partido_1 = id_aux[idx_1]
     porcentaje_1 = calcular_porcentaje(max_1, total_votos)
-    votos_aux.pop(idx_1)
-    id_aux.pop(idx_1)
-    if len(votos_aux) > 0:
-        max_2 = votos_aux[0]
-        idx_2 = 0
-        for i in range(1, len(votos_aux)):
-            if votos_aux[i] > max_2:
+
+    # 2. Encontrar el segundo lugar sin usar pop() ni remove()
+    # Buscamos el mayor valor ignorando el indice del ganador absoluto (idx_1)
+    max_2 = -1
+    partido_2 = "Ninguno"
+    
+    for i in range(len(votos_aux)):
+        if i != idx_1:  # Ignoramos al primer puesto
+            if max_2 == -1 or votos_aux[i] > max_2:
                 max_2 = votos_aux[i]
-                idx_2 = i
-        partido_2 = id_aux[idx_2]
-    else:
-        partido_2 = "Ninguno"
+                partido_2 = id_aux[i]
+
     print(f"\nPartido ganador en votos: {partido_1} con el {porcentaje_1:.2f}%")
+
+    # Evaluacion de las condiciones de victoria directa o balotaje
     if porcentaje_1 > 45.0:
         print("NO HAY SEGUNDA VUELTA. Gana el primer partido por superar el 45%.")
     elif porcentaje_1 >= 40.0:
@@ -124,11 +135,15 @@ def verificar_segunda_vuelta(lista_id, lista_votos):
     else:
         print(f"HAY SEGUNDA VUELTA entre {partido_1} y {partido_2}. El ganador no llego al 40%.")
 
-def ordenar_partidos_por_nombre(lista_id, lista_votos):
-    n = len(lista_id)
-    id_ordenado = lista_id.copy()
-    votos_ordenado = lista_votos.copy()
 
+def ordenar_partidos_por_nombre(lista_id, lista_votos):
+    id_ordenado = []
+    votos_ordenado = []
+    for i in range(len(lista_id)):
+        id_ordenado.append(lista_id[i])
+        votos_ordenado.append(lista_votos[i])
+
+    n = len(id_ordenado)
     for i in range(n - 1):
         for j in range(0, n - i - 1):
             if id_ordenado[j] > id_ordenado[j + 1]:
@@ -140,7 +155,7 @@ def ordenar_partidos_por_nombre(lista_id, lista_votos):
                 votos_ordenado[j + 1] = aux_votos
 
     total_votos = calcular_total_votos(votos_ordenado)
-    print("\n--- Partidos Ordenados Alfabeticamente ---")
+    print("\n- Partidos Ordenados Alfabeticamente -")
     for i in range(len(id_ordenado)):
         porcentaje = calcular_porcentaje(votos_ordenado[i], total_votos)
-        print(f"Partido: {id_ordenado[i]} | Votos: {votos_ordenado[i]} | Porcentaje: {porcentaje:.2f}%")
+        Prints.mostrar_fila_partido(id_ordenado[i], votos_ordenado[i], porcentaje)
