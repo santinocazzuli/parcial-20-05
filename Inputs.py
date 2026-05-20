@@ -1,22 +1,34 @@
-#Inputs.py
+# inputs.py
 
 def es_numero_valido(cadena):
-
     if len(cadena) == 0:
         return False
+    digitos_validos = "0123456789"
     
     for i in range(len(cadena)):
         caracter = cadena[i]
-        if caracter < '0' or caracter > '9':
+        encontrado = False
+        for j in range(len(digitos_validos)):
+            if caracter == digitos_validos[j]:
+                encontrado = True
+                break
+        if not encontrado:
             return False
     return True
 
 def convertir_a_entero(cadena):
-    numero = 0
+    digitos_validos = "0123456789"
+    numero_final = 0
     for i in range(len(cadena)):
-        digito = ord(cadena[i]) - ord('0')
-        numero = numero * 10 + digito
-    return numero
+        caracter_actual = cadena[i]
+        valor_digito = 0
+        for j in range(len(digitos_validos)):
+            if caracter_actual == digitos_validos[j]:
+                valor_digito = j
+                break
+        numero_final = numero_final * 10 + valor_digito
+        
+    return numero_final
 
 def pedir_entero(mensaje, mensaje_error):
     while True:
@@ -34,4 +46,4 @@ def pedir_opcion_menu(mensaje, min_opc, max_opc):
             numero = convertir_a_entero(entrada)
             if numero >= min_opc and numero <= max_opc:
                 return numero
-        print(f"Opcion invalida. Debe ser un numero entre {min_opc} y {max_opc}.")
+        print(f"Opcion invalida. Debe ser un numero entre {min_opc} and {max_opc}.")
