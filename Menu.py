@@ -12,24 +12,11 @@ def ejecutar_sistema() -> None:
             prints.mostrar_mensaje_error("Acceso denegado. Primero debe cargar los votos (Opcion 1 o 11).")
             continue
         if opcion == "1":
-            votos_partidos = []
-            print("\n--- INICIO DE CARGA SECUENCIAL DE VOTOS ---")
-            for i in range(1, 6):
-                voto_validado = inputs.solicitar_votos_partido(i)
-                votos_partidos.append(voto_validado)
+            votos_partidos = inputs.cargar_votos_secuenciales()
             datos_cargados = True
             print("Carga masiva completada con exito!")
         elif opcion == "2":
-            total = funciones.calcular_total_votos(votos_partidos)
-            cantidad = len(votos_partidos)
-            print(f"\n--- LISTADO GENERAL DE VOTOS (Cantidad de Partidos Postulados: {cantidad}) ---")
-            print(f"{'Identificador':<15}{'Votos':<12}{'Porcentaje':<12}")
-            print("-"*40)
-            for i in range(cantidad):
-                porcentaje = (votos_partidos[i] / total) * 100
-                print(f"Partido {i+1:<8}{votos_partidos[i]:<12}{porcentaje:.2f}%")
-            print("-"*40)
-            print(f"TOTAL GENERAL DE VOTOS ACUMULADOS: {total}")
+            prints.mostrar_listado_general(votos_partidos)
         elif opcion in ["3", "4", "5"]:
             limite = 10.0 if opcion == "3" else (15.0 if opcion == "4" else 20.0)
             res = funciones.filtrar_por_debajo_porcentaje(votos_partidos, limite)
@@ -90,5 +77,3 @@ def ejecutar_sistema() -> None:
             break
         else:
             prints.mostrar_mensaje_error("Opcion invalida. Ingrese un numero correspondiente a las opciones (1-13).")
-            print("\nGracias por utilizar el sistema. Saliendo...")
-            break
