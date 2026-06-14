@@ -1,150 +1,92 @@
-# Funciones.py
-
-import Prints
-
-def calcular_total_votos(lista_votos):
+def calcular_total_votos(votos_partidos: list) -> int:
     total = 0
-    for i in range(len(lista_votos)):
-        total += lista_votos[i]
+    for voto in votos_partidos:
+        total += voto
     return total
 
-def calcular_porcentaje(votos_partido, total_votos):
-    if total_votos == 0:
+def calcular_promedio_votos(votos_partidos: list) -> float:
+    total_votos = calcular_total_votos(votos_partidos)
+    cantidad_partidos = len(votos_partidos)
+    if cantidad_partidos == 0:
         return 0.0
-    return (votos_partido / total_votos) * 100
+    return total_votos / cantidad_partidos
 
-def calcular_promedio_votos(lista_votos):
-    total = calcular_total_votos(lista_votos)
-    if len(lista_votos) == 0:
-        return 0.0
-    return total / len(lista_votos)
+def encontrar_menor_voto(votos_partidos: list) -> int:
+    menor = votos_partidos[0]
+    for voto in votos_partidos:
+        if voto < menor:
+            menor = voto
+    return menor
 
-def mostrar_segun_porcentaje(lista_id, lista_votos, limite_porcentaje, condicion):
-    total_votos = calcular_total_votos(lista_votos)
-    hay_datos = False   
-    for i in range(len(lista_votos)):
-        porcentaje = calcular_porcentaje(lista_votos[i], total_votos)
-        
-        if condicion == "menor" and porcentaje < limite_porcentaje:
-            print(f"Partido {lista_id[i]} -> Votos: {lista_votos[i]} | Porcentaje: {porcentaje:.2f}%")
-            hay_datos = True
-        elif condicion == "mayor" and porcentaje > limite_porcentaje:
-            print(f"Partido {lista_id[i]} -> Votos: {lista_votos[i]} | Porcentaje: {porcentaje:.2f}%")
-            hay_datos = True
-            
-    if not hay_datos:
-        print(f"No se encontraron partidos con la condicion solicitada.")
+def encontrar_mayor_voto(votos_partidos: list) -> int:
+    mayor = votos_partidos[0]
+    for voto in votos_partidos:
+        if voto > mayor:
+            mayor = voto
+    return mayor
 
-def mostrar_segun_cantidad_votos(lista_id, lista_votos, limite_votos):
-    total_votos = calcular_total_votos(lista_votos)
-    hay_datos = False
-    
-    for i in range(len(lista_votos)):
-        if lista_votos[i] > limite_votos:
-            porcentaje = calcular_porcentaje(lista_votos[i], total_votos)
-            print(f"Partido {lista_id[i]} -> Votos: {lista_votos[i]} | Porcentaje: {porcentaje:.2f}%")
-            hay_datos = True
-            
-    if not hay_datos:
-        print(f"No hay partidos con mas de {limite_votos} votos.")
+def filtrar_por_debajo_porcentaje(votos_partidos: list, limite_porcentaje: float) -> list:
+    total_votos = calcular_total_votos(votos_partidos)
+    partidos_filtrados = []
+    votos_filtrados = []
+    porcentajes_filtrados = []
+    porcentaje_acumulado = 0.0
+    for i in range(len(votos_partidos)):
+        porcentaje = (votos_partidos[i] / total_votos) * 100
+        if porcentaje < limite_porcentaje:
+            partidos_filtrados.append(i + 1)
+            votos_filtrados.append(votos_partidos[i])
+            porcentajes_filtrados.append(porcentaje)
+            porcentaje_acumulado += porcentaje
+    return [partidos_filtrados, votos_filtrados, porcentajes_filtrados, porcentaje_acumulado]
 
-def mostrar_por_encima_del_promedio(lista_id, lista_votos):
-    promedio = calcular_promedio_votos(lista_votos)
-    total_votos = calcular_total_votos(lista_votos)
-    print(f"El promedio de votos es: {promedio:.2f}")
-    
-    hay_datos = False
-    for i in range(len(lista_votos)):
-        if lista_votos[i] > promedio:
-            porcentaje = calcular_porcentaje(lista_votos[i], total_votos)
-            print(f"Partido {lista_id[i]} -> Votos: {lista_votos[i]} | Porcentaje: {porcentaje:.2f}%")
-            hay_datos = True
-            
-    if not hay_datos:
-        print("Ningun partido supera el promedio.")
+def filtrar_por_encima_votos(votos_partidos: list, minimo_votos: int) -> list:
+    total_votos = calcular_total_votos(votos_partidos)
+    partidos_filtrados = []
+    votos_filtrados = []
+    porcentajes_filtrados = []
+    for i in range(len(votos_partidos)):
+        if votos_partidos[i] > minimo_votos:
+            partidos_filtrados.append(i + 1)
+            votos_filtrados.append(votos_partidos[i])
+            porcentajes_filtrados.append((votos_partidos[i] / total_votos) * 100)
+    return [partidos_filtrados, votos_filtrados, porcentajes_filtrados]
 
-def encontrar_partido_menos_votado(lista_id, lista_votos):
-    if len(lista_votos) == 0:
-        print("No hay datos cargados.")
-        return
-    menor_votos = lista_votos[0]
-    indice_menor = 0
+def obtener_partidos_menos_votados(votos_partidos: list) -> list:
+    menor_voto = encontrar_menor_voto(votos_partidos)
+    total_votos = calcular_total_votos(votos_partidos)
+    partidos_indices = []
+    partidos_votos = []
+    partidos_porcentajes = []
+    for i in range(len(votos_partidos)):
+        if votos_partidos[i] == menor_voto:
+            partidos_indices.append(i + 1)
+            partidos_votos.append(votos_partidos[i])
+            partidos_porcentajes.append((votos_partidos[i] / total_votos) * 100)
+    return [partidos_indices, partidos_votos, partidos_porcentajes]
 
-    for i in range(1, len(lista_votos)):
-        if lista_votos[i] < menor_votos:
-            menor_votos = lista_votos[i]
-            indice_menor = i
-        elif lista_votos[i] == menor_votos:
-            if len(lista_id[i]) < len(lista_id[indice_menor]):
-                menor_votos = lista_votos[i]
-                indice_menor = i
+def evaluar_segunda_vuelta_logica(votos_partidos: list) -> list:
+    total_votos = calcular_total_votos(votos_partidos)
+    mayor_voto = encontrar_mayor_voto(votos_partidos)
+    id_ganador = -1
+    for i in range(len(votos_partidos)):
+        if votos_partidos[i] == mayor_voto:
+            id_ganador = i + 1
+            break
+    porcentaje_ganador = (mayor_voto / total_votos) * 100
+    if porcentaje_ganador <= 50.0:
+        return [True, id_ganador, mayor_voto, porcentaje_ganador]
+    return [False, id_ganador, mayor_voto, porcentaje_ganador]
 
-    total_votos = calcular_total_votos(lista_votos)
-    porcentaje = calcular_porcentaje(menor_votos, total_votos)
-    
-    print("\n--- Partido Menos Votado ---")
-    print(f"Partido: {lista_id[indice_menor]} | Votos: {menor_votos} | Porcentaje: {porcentaje:.2f}%")
-
-def verificar_segunda_vuelta(lista_id, lista_votos, cantidad_partidos):
-    total_votos = calcular_total_votos(lista_votos, cantidad_partidos)
-    if total_votos == 0:
-        print("No hay votos registrados.")
-        return
-
-    votos_aux = [0] * cantidad_partidos
-    id_aux = [None] * cantidad_partidos
-    for i in range(cantidad_partidos):
-        votos_aux[i] = lista_votos[i]
-        id_aux[i] = lista_id[i]
-    max_1 = votos_aux[0]
-    idx_1 = 0
-    for i in range(1, cantidad_partidos):
-        if votos_aux[i] > max_1:
-            max_1 = votos_aux[i]
-            idx_1 = i
-
-    partido_1 = id_aux[idx_1]
-    porcentaje_1 = calcular_porcentaje(max_1, total_votos)
-    max_2 = -1
-    partido_2 = "Ninguno"
-    for i in range(cantidad_partidos):
-        if i != idx_1:
-            if max_2 == -1 or votos_aux[i] > max_2:
-                max_2 = votos_aux[i]
-                partido_2 = id_aux[i]
-
-    print(f"\nPartido ganador en votos: {partido_1} con el {porcentaje_1:.2f}%")
-
-    if porcentaje_1 > 45.0:
-        print("NO HAY SEGUNDA VUELTA. Gana el primer partido por superar el 45%.")
-    elif porcentaje_1 >= 40.0:
-        porcentaje_2 = calcular_porcentaje(max_2, total_votos) if partido_2 != "Ninguno" else 0.0
-        diferencia = porcentaje_1 - porcentaje_2
-        if diferencia > 10.0:
-            print("NO HAY SEGUNDA VUELTA. Gana por superar el 40% con mas de 10% de diferencia.")
-        else:
-            print(f"HAY SEGUNDA VUELTA entre {partido_1} y {partido_2}. Diferencia menor al 10%.")
-    else:
-        print(f"HAY SEGUNDA VUELTA entre {partido_1} y {partido_2}. El ganador no llego al 40%.")
-
-def ordenar_partidos_por_nombre(lista_id, lista_votos, cantidad_partidos):
-    id_ordenado = [None] * cantidad_partidos
-    votos_ordenado = [0] * cantidad_partidos
-    for i in range(cantidad_partidos):
-        id_ordenado[i] = lista_id[i]
-        votos_ordenado[i] = lista_votos[i]
-    for i in range(cantidad_partidos - 1):
-        for j in range(0, cantidad_partidos - i - 1):
-            if id_ordenado[j] > id_ordenado[j + 1]:
-                aux_id = id_ordenado[j]
-                id_ordenado[j] = id_ordenado[j + 1]
-                id_ordenado[j + 1] = aux_id
-                aux_votos = votos_ordenado[j]
-                votos_ordenado[j] = votos_ordenado[j + 1]
-                votos_ordenado[j + 1] = aux_votos
-
-    total_votos = calcular_total_votos(votos_ordenado, cantidad_partidos)
-    print("\n--- Partidos Ordenados Alfabeticamente ---")
-    for i in range(cantidad_partidos):
-        porcentaje = calcular_porcentaje(votos_ordenado[i], total_votos)
-        Prints.mostrar_fila_partido(id_ordenado[i], votos_ordenado[i], porcentaje)
+def ordenar_nombres_alfabeticamente(lista_nombres: list) -> list:
+    nombres_ordenados = []
+    for nombre in lista_nombres:
+        nombres_ordenados.append(nombre)
+    limite = len(nombres_ordenados)
+    for i in range(limite - 1):
+        for j in range(0, limite - i - 1):
+            if nombres_ordenados[j] > nombres_ordenados[j + 1]:
+                auxiliar = nombres_ordenados[j]
+                nombres_ordenados[j] = nombres_ordenados[j + 1]
+                nombres_ordenados[j + 1] = auxiliar
+    return nombres_ordenados
