@@ -1,3 +1,5 @@
+import funciones
+
 def mostrar_menu_opciones() -> None:
     print("\n" + "="*50)
     print("      SISTEMA DE GESTION DE ELECCIONES UTN FRA      ")
@@ -19,6 +21,18 @@ def mostrar_menu_opciones() -> None:
 
 def mostrar_mensaje_error(mensaje: str) -> None:
     print(f"\n[ERROR] {mensaje}")
+
+def mostrar_listado_general(votos_partidos: list) -> None:
+    total = funciones.calcular_total_votos(votos_partidos)
+    cantidad = len(votos_partidos)
+    print(f"\n--- LISTADO GENERAL DE VOTOS (Cantidad de Partidos Postulados: {cantidad}) ---")
+    print(f"{'Identificador':<15}{'Votos':<12}{'Porcentaje':<12}")
+    print("-"*40)
+    for i in range(cantidad):
+        porcentaje = (votos_partidos[i] / total) * 100
+        print(f"Partido {i+1:<8}{votos_partidos[i]:<12}{porcentaje:.2f}%")
+    print("-"*40)
+    print(f"TOTAL GENERAL DE VOTOS ACUMULADOS: {total}")
 
 def mostrar_resultado_filtro(titulo: str, partidos: list, votos: list, porcentajes: list, resumen: str = "") -> None:
     print(f"\n--- {titulo} ---")
