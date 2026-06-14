@@ -1,49 +1,24 @@
-# inputs.py
-
-def es_numero_valido(cadena):
-    if len(cadena) == 0:
-        return False
-    digitos_validos = "0123456789"
-    
-    for i in range(len(cadena)):
-        caracter = cadena[i]
-        encontrado = False
-        for j in range(len(digitos_validos)):
-            if caracter == digitos_validos[j]:
-                encontrado = True
-                break
-        if not encontrado:
-            return False
-    return True
-
-def convertir_a_entero(cadena):
-    digitos_validos = "0123456789"
-    numero_final = 0
-    for i in range(len(cadena)):
-        caracter_actual = cadena[i]
-        valor_digito = 0
-        for j in range(len(digitos_validos)):
-            if caracter_actual == digitos_validos[j]:
-                valor_digito = j
-                break
-        numero_final = numero_final * 10 + valor_digito
-        
-    return numero_final
-
-def pedir_entero(mensaje, mensaje_error):
+def solicitar_votos_partido(numero_partido: int) -> int:
     while True:
-        entrada = input(mensaje)
-        if es_numero_valido(entrada):
-            numero = convertir_a_entero(entrada)
-            if numero > 0:
-                return numero
-        print(mensaje_error)
+        entrada = input(f"Ingrese los votos para el Partido {numero_partido}: ")
+        es_valido = True
+        if len(entrada) == 0:
+            es_valido = False
+        else:
+            for caracter in entrada:
+                if ord(caracter) < 48 or ord(caracter) > 57:
+                    es_valido = False
+                    break
+        if es_valido:
+            votos = int(entrada)
+            if votos > 0:
+                return votos
+            else:
+                print("Error: La cantidad de votos debe ser mayor a cero.")
+        else:
+            print("Error invalido: Por favor, ingrese un numero entero valido (sin letras).")
 
-def pedir_opcion_menu(mensaje, min_opc, max_opc):
-    while True:
-        entrada = input(mensaje)
-        if es_numero_valido(entrada):
-            numero = convertir_a_entero(entrada)
-            if numero >= min_opc and numero <= max_opc:
+def solicitar_opcion_menu() -> str:
+    return input("Seleccione una opcion del menu (1-13): ")
                 return numero
         print(f"Opcion invalida. Debe ser un numero entre {min_opc} and {max_opc}.")
