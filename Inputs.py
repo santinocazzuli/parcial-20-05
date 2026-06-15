@@ -25,13 +25,10 @@ def solicitar_votos_partido(numero_partido: int) -> int:
             print("Error invalido: Por favor, ingrese un numero entero valido (sin letras).")
 
 def cargar_votos_secuenciales() -> list:
-    # Creamos una lista fija de 5 casilleros llenos de ceros, sin usar append
     lista_votos = [0] * 5
     print("\n--- INICIO DE CARGA SECUENCIAL DE VOTOS ---")
     for i in range(5):
-        # i va a valer de 0 a 4. Para el cartel le sumamos 1 (Partido 1, 2, etc.)
         voto_validado = solicitar_votos_partido(i + 1)
-        # Guardamos el dato directamente en su casillero correspondiente
         lista_votos[i] = voto_validado
     return lista_votos
 
